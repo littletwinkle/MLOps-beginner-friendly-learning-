@@ -31,15 +31,15 @@ Self-written beginner guides with tester and MLOps perspectives on every topic.
 
 | File | Description |
 |------|-------------|
-| [numpy_mlops_course.md](courses/numpy_mlops_course.md) | Array creation, reshaping, boolean filtering, broadcasting, save/load + mini project |
-| [pandas_mlops_course.md](courses/pandas_mlops_course.md) | DataFrames, null handling, groupby, merging, encoding + ML-ready pipeline project |
+| [numpy_mlops_course.md](numpy_mlops_course.md) | Array creation, reshaping, boolean filtering, broadcasting, save/load + mini project |
+| [pandas_mlops_course.md](pandas_mlops_course.md) | DataFrames, null handling, groupby, merging, encoding + ML-ready pipeline project |
 
 ---
 
 ## 🗂️ Repo Structure
 
 ```
-mlops-learning-journey/
+MLOps beginner friendly learning
 │
 ├── README.md
 │
@@ -63,14 +63,14 @@ mlops-learning-journey/
 - **Python 3** — NumPy, Pandas, scikit-learn, Flask/FastAPI
 - **Docker** — containerisation
 - **GitHub Actions** — CI/CD automation
-- **Render / Railway / Hugging Face Spaces** — free deployment
+
 
 ---
 
 ## 🔗 Connect
 
-- LinkedIn: [your-linkedin-url]
-- Kaggle: [your-kaggle-url]
+
+- Linkedin: [https://www.linkedin.com/in/kannammai-v-r-03a498239
 
 ---
 
