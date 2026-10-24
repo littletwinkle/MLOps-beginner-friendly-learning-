@@ -72,3 +72,14 @@ This is unverified — it has not been run yet and needs a real GCP project, zon
 - Billing/cost alerts
 - Multi-VM orchestration
 - Authentication/authorization on the FastAPI endpoints themselves (currently all endpoints are open, no auth layer yet)
+
+## Progress log
+
+**This week:** groundwork for a real (non-notebook) deployment, which this RFC will eventually need:
+- Ran FastAPI outside Kaggle for the first time — in PyCharm, via `uvicorn main:app --reload`, confirming `app = FastAPI()` must be defined at module level before any route decorators reference it
+- Learned the GET-vs-POST distinction concretely: a POST route (like `create_user`) cannot be opened via a browser address bar — only `/docs`, `httpx`, or `curl` can call it, which matters for how `/vm/{instance_name}/start` (a POST route) will need to be tested later
+- Debugged a real 422 Unprocessable Content error caused by malformed JSON (invalid control characters from smart quotes/line breaks) — relevant since the VM endpoints above will also take structured JSON/path params and need the same validation discipline
+- Added `response_model` (`UserOut` excluding `password`) as a general pattern — worth applying to the VM endpoints too, so credentials/project IDs never leak into a response
+- Corrected a `human-learn` outlier detector bug unrelated to this RFC's scope, but same debugging discipline: verify library behavior against actual source/docs rather than assumed API shape, which applies directly to testing `google-cloud-compute` calls below, since that sketch is still unverified
+
+No change to the VM monitoring design itself this week — this log captures the operational skills needed before attempting the untested sketch above.
