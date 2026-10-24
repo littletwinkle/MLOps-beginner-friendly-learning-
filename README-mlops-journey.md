@@ -19,9 +19,11 @@ This repo tracks my progress week by week — from NumPy basics to a fully deplo
 | 7 | scikit-learn — VotingClassifier (soft voting, weighted estimators) | ✅ Complete |
 | 8 | scikit-learn — decision thresholds, StackingClassifier (meta-model) | ✅ Complete |
 | 9 | scikit-learn — grouped models (per-category), time decay (scikit-lego) | ✅ Complete |
-| 10 | FastAPI — handlers, async, multiple servers, Pydantic request logs, JSON auto-serialization, HTML forms, CRUD (wrapping a model in an API) | 🔄 In Progress |
-| 11 | Docker — containerise the API | ⏳ Upcoming |
-| 12 | CI/CD + Deployment — GitHub Actions + Render/Railway | ⏳ Upcoming |
+| 10 | FastAPI — handlers, async, multiple servers, Pydantic request logs, JSON auto-serialization, HTML forms, CRUD (wrapping a model in an API) | ✅ Complete |
+| 11 | FastAPI — raw request lookup by ID, system stats endpoint, start/stop snapshots, `response_model` (response shaping/security), real deployment + debugging in PyCharm; VM start/stop monitoring (RFC, Compute Engine scoped) | 🔄 In Progress |
+| 11b | scikit-learn — `human-learn`: rule-based `FunctionClassifier` (Titanic fare threshold), `FunctionOutlierDetector` for outlier detection (penguin dataset) | ✅ Complete |
+| 12 | Docker — containerise the API | ⏳ Upcoming |
+| 13 | CI/CD + Deployment — GitHub Actions + Render/Railway | ⏳ Upcoming |
 
 ## 📚 Course Notes
 
@@ -40,7 +42,9 @@ Self-written beginner guides with tester, data analyst, and MLOps perspectives o
 | `threshold-and-metamodel-notes.md` | Applying decision thresholds on top of a `StackingClassifier` meta-model; meta-model (learns to combine base models) vs. VotingClassifier (fixed, hand-set weights) |
 | `grouped-models-time-decay-notes.md` | One model per category via manual splitting or `GroupedPredictor` (scikit-lego); time decay via `sample_weight` or `DecayEstimator` (scikit-lego); grouping vs. time decay as distinct, combinable strategies; train/test distribution-shift risk |
 | `fastapi-handlers-async-crud-notes.md` *(updated)* | FastAPI basics: handlers as functions, `asyncio.sleep` vs `time.sleep` in async routes, running multiple uvicorn servers, Pydantic request-log schema, automatic JSON request/response serialization, HTML forms (`Form(...)`) for server + front-end data capture, CRUD ↔ HTTP methods, running in Kaggle and Google Cloud Shell |
-| `fastapi-traceability-matrix.md` *(new)* | Traceability matrix mapping each FastAPI concept to its implementation and test status, for future reference |
+| `fastapi-traceability-matrix.md` *(updated)* | Traceability matrix mapping each FastAPI concept to its implementation and test status, for future reference |
+| `fastapi-rfc-vm-monitoring.md` *(updated)* | RFC design doc for starting/stopping a cloud VM and reading its stats via FastAPI, scoped against the Google Cloud Compute Engine API — design not yet implemented; includes a progress log of related real-deployment groundwork (PyCharm, `response_model`, GET/POST testing) |
+| `sklearn-rfc-humanlearn-outliers.md` *(new)* | `human-learn` outlier detection resolved: `FunctionOutlierDetector`/`InteractiveOutlierDetector`, scikit-learn-style `1`/`-1` API, plus a local-environment assignment using the penguin dataset |
 
 ## 🗂 Repo Structure
 
@@ -61,7 +65,9 @@ MLOps beginner friendly learning
 │   ├── threshold-and-metamodel-notes.md
 │   ├── grouped-models-time-decay-notes.md
 │   ├── fastapi-handlers-async-crud-notes.md   (updated)
-│   └── fastapi-traceability-matrix.md   (new)
+│   ├── fastapi-traceability-matrix.md   (updated)
+│   ├── fastapi-rfc-vm-monitoring.md   (updated)
+│   └── sklearn-rfc-humanlearn-outliers.md   (new)
 │
 ├── notebooks/
 │   ├── numpy_practice.ipynb
@@ -76,16 +82,17 @@ MLOps beginner friendly learning
 
 - Kaggle Notebooks — free GPU, pre-installed libraries
 - Google Cloud Shell — running and testing FastAPI servers
+- PyCharm — running and debugging FastAPI locally (real GET/POST testing via `/docs`, not simulated)
 - Python 3 — NumPy, Pandas, scikit-learn, scikit-lego, FastAPI, uvicorn, httpx
 - Docker — containerisation
 - GitHub Actions — CI/CD automation
 
 ## 📓 Kaggle Notebooks
 
-- scikit-learn — preprocessing, encoding, scaling, class imbalance handling (sample_weight/class_weight), hyperparameter tuning with GridSearchCV, VotingClassifier (soft voting, weighted estimators), decision thresholds & StackingClassifier meta-models, grouped models per category & time decay (scikit-lego)
+- scikit-learn — preprocessing, encoding, scaling, class imbalance handling (sample_weight/class_weight), hyperparameter tuning with GridSearchCV, VotingClassifier (soft voting, weighted estimators), decision thresholds & StackingClassifier meta-models, grouped models per category & time decay (scikit-lego), `human-learn` rule-based `FunctionClassifier` and `FunctionOutlierDetector`
   🔗 https://www.kaggle.com/code/kannammaivr/scikit-learn
-- FastAPI — handlers, async vs blocking sleep, multiple uvicorn servers on different ports (run in a background thread inside the notebook), Pydantic request-log schema, automatic JSON serialization, HTML forms for survey-style data capture, CRUD basics
-  *(notebook link to be added)*
+- FastAPI — handlers, async vs blocking sleep, multiple uvicorn servers on different ports (run in a background thread inside the notebook), Pydantic request-log schema, automatic JSON serialization, HTML forms for survey-style data capture, raw request lookup by unique ID, system stats via `psutil`, start/stop snapshots, `response_model` for response shaping/security, CRUD basics
+  🔗 https://www.kaggle.com/code/kannammaivr/fastapi-html-json
 
 ## 🔗 Connect
 
