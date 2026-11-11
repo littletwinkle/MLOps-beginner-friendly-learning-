@@ -27,6 +27,11 @@ Maps each concept covered to its design intent, where it's implemented, and how 
 | R20 | Hiding sensitive fields via response model | Prevent sensitive fields (e.g. password) from ever reaching the client | `UserOut` omits `password`; FastAPI drops undeclared fields automatically | Compare `UserIn` vs `UserOut` response payload | Done |
 | R21 | Response-only extra fields | Add fields to a response that aren't part of the base/request model | `ItemOut(Item)` extends `Item` with `branch_name` | `GET /items/{id}` returns `branch_name` not present on `Item` | Done |
 | R22 | `response_model=None` | Skip response validation for non-standard responses (redirects, raw JSON) | `response_model=None` on a `RedirectResponse` route | `GET /go` returns a redirect, not validated JSON | Done |
+| R23 | JSON response with Pydantic model | Return a structured response (event ID, activity, status) so user actions can be tracked | `EventIn` / `EventOut` models, `POST /events` with `response_model=EventOut` in `projects/fastapi-response-patterns/main.py` | `POST /events` with `{"activity": "login"}` in `/docs` → `200` with event ID 1 | Done |
+| R24 | Streaming response | Send live data in chunks instead of one response | `StreamingResponse(live_data())` on `GET /stream`, 5 updates, 1 second apart | `GET /stream` → `200`; body has 5 updates; `curl.exe -N` shows one line per second | Done |
+| R25 | Request logging via middleware | Log method, path, status and time taken for every call from one place | `@app.middleware("http")` `log_requests()` | Call each endpoint, check PyCharm terminal for one log line per call | Done |
+| R26 | Streaming timing | Understand what the middleware time means for a streaming endpoint | Middleware log for `GET /stream` | Log showed `200 in 1.54 ms` (time to first byte); total time is ~5 s because the middleware stops at response start | Done (time to first byte); total-time logging inside the generator suggested |
+| R27 | Reading `/docs` response codes | Tell possible responses apart from actual results | `/docs` **Responses** table vs **Server response** | Confirmed 422 listed on a successful call; real calls checked in the terminal log | Done (documented) |
 
 ## Legend
 - **Done** — implemented and manually verified
@@ -35,7 +40,8 @@ Maps each concept covered to its design intent, where it's implemented, and how 
 
 ## Known gaps to close next
 - R6: no actual PUT/PATCH/DELETE endpoints yet, only the mapping is documented
-- R7: no explicit test confirming FastAPI returns `422` on a malformed `RequestLog` payload
+- R7: no explicit test confirming FastAPI returns `422` on a malformed payload. Send a wrong body on purpose (for example `{"user_id": "abc"}` to `POST /users`) and confirm `-> 422` in the server log
 - R16: `server_stop` snapshot needs a way to cleanly trigger shutdown from within the same Kaggle run to verify
 - R18: VM start/stop monitoring is scoped but not started — needs Compute Engine API design (see RFC)
-- Persistence is all in-memory (`logs`, `responses`, `logs_db`) — lost on restart; no database layer yet
+- R26: total streaming time not yet logged; add a log line inside `live_data()` after the loop
+- Persistence is all in-memory (`logs`, `responses`, `logs_db`, event counter) — lost on restart; no database layer yet
