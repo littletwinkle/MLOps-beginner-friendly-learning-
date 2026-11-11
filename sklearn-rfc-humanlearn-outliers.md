@@ -73,3 +73,48 @@ print(detector.predict(test_row))  # expect -1
 ```
 
 Adjust the threshold ranges to match whatever penguin dataset you're actually using - the ranges above are illustrative, not verified against a specific dataset.
+
+## Interactive outlier detection (drawing polygons)
+
+`InteractiveOutlierDetector` builds the outlier model from polygons you draw on charts, instead of from a function.
+
+- `InteractiveCharts(df, labels="<column>")` builds the charts. The label column colors the points while you draw.
+- You can use an existing column (region, species) or create your own, e.g. `df["group"] = ...` with values like "group 1" / "group 2", and pass its name as `labels`.
+- `charts.add_chart(x=..., y=...)` shows a chart to draw on. Run each `add_chart` in its own cell.
+- `InteractiveOutlierDetector(json_desc=charts.data(), threshold=1)` turns the drawing into a model. `.fit(X, y)` is only a formality; `.predict(X)` returns `1` inside the polygons and `-1` for outliers.
+- `threshold` is the minimum number of polygons a point must fall in to not be an outlier (default 1).
+- Drawing needs a mouse in a Jupyter notebook (uses Bokeh), so use local Jupyter rather than a phone. matplotlib is only for viewing results: scatter the features and color by `preds`.
+
+```python
+from hulearn.experimental.interactive import InteractiveCharts
+from hulearn.outlier import InteractiveOutlierDetector
+import numpy as np
+import matplotlib.pyplot as plt
+
+df["group"] = np.where(df["bill_length_mm"] < 45, "group 1", "group 2")
+
+charts = InteractiveCharts(df, labels="group")
+charts.add_chart(x="bill_length_mm", y="bill_depth_mm")      # own cell, draw polygons
+charts.add_chart(x="flipper_length_mm", y="body_mass_g")     # own cell, draw polygons
+
+X, y = df.drop(columns=["group"]), df["group"]
+model = InteractiveOutlierDetector(json_desc=charts.data(), threshold=1)
+preds = model.fit(X, y).predict(X)  # 1 = inside, -1 = outlier
+
+plt.scatter(X["bill_length_mm"], X["bill_depth_mm"], c=preds)
+plt.xlabel("bill_length_mm")
+plt.ylabel("bill_depth_mm")
+plt.show()
+```
+
+### Missing values (course takeaway)
+
+From the last part of the freeCodeCamp scikit-learn crash course: when a new row is missing one feature (e.g. `bill_length_mm`) but the others are present, prediction is still possible using the polygons on charts of the other columns.
+
+Not yet verified on the installed version: how `threshold` interacts with this. With `threshold=1`, one chart accepting the point is likely enough; with `threshold=2`, the chart using the missing column may not be able to count, so the point could come back `-1`. Test it:
+
+```python
+test = X.iloc[[0]].copy()
+test["bill_length_mm"] = np.nan
+print(model.predict(test))
+```
