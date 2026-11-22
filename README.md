@@ -20,7 +20,7 @@ This repo tracks my progress week by week — from NumPy basics to a fully deplo
 | 8 | scikit-learn — decision thresholds, StackingClassifier (meta-model) | ✅ Complete |
 | 9 | scikit-learn — grouped models (per-category), time decay (scikit-lego) | ✅ Complete |
 | 10 | FastAPI — handlers, async, multiple servers, Pydantic request logs, JSON autoserialization, HTML forms, CRUD (wrapping a model in an API) | ✅ Complete |
-| 11 | FastAPI — raw request lookup by ID, system stats endpoint, start/stop snapshots, `response_model` (response shaping/security), **response patterns (JSON via Pydantic, streaming, middleware logging) + practice assignment**, real deployment + debugging in PyCharm; VM start/stop monitoring (RFC, Compute Engine scoped) | 🔄 In Progress |
+| 11 | FastAPI — raw request lookup by ID, system stats endpoint, start/stop snapshots, `response_model` (response shaping/security), **response patterns (JSON via Pydantic, streaming, middleware logging) + practice assignment, Dynaconf configuration (environments, secrets, runtime overrides) + assignment**, real deployment + debugging in PyCharm; VM start/stop monitoring (RFC, Compute Engine scoped) | 🔄 In Progress |
 | 11b | scikit-learn — human-learn: rule-based FunctionClassifier (Titanic fare threshold), FunctionOutlierDetector for outlier detection (penguin dataset) | ✅ Complete |
 | 12 | Docker — containerise the API | ⏳ Upcoming |
 | 13 | CI/CD + Deployment — GitHub Actions + Render/Railway | ⏳ Upcoming |
@@ -49,6 +49,27 @@ Then open `http://127.0.0.1:8000/docs` and try each endpoint.
 
 **Status:** ✅ Complete — all four endpoints run and tested locally in PyCharm. Full write-up in `fastapi-response-patterns-notes.md`.
 
+## 🧪 Week 11 Assignment — Dynaconf Configuration *(new)*
+
+A FastAPI app (`projects/fastapi-dynaconf-config/`) that reads its settings from config files instead of the code:
+
+| Item | What it shows |
+|------|---------------|
+| `dynaconf init` | Creates `config.py`, `settings.toml` and `.secrets.toml` (added to `.gitignore`) |
+| `[development]` / `[production]` sections | Different debug and port values per environment |
+| `ENV_FOR_DYNACONF=production` | Switches the environment without changing code |
+| `DYNACONF_PORT=9500` | Overrides one value at run time; beats the file value |
+| `GET /info` and `GET /secret-check` | Shows the active settings; confirms the secret loaded without returning it |
+
+**Run it:**
+
+```bash
+pip install fastapi uvicorn dynaconf
+python main.py
+```
+
+**Status:** ✅ Complete — environment switch, port override and secret check tested locally. Full write-up in `fastapi-dynaconf-config-notes.md`. Do **not** upload `.secrets.toml` to GitHub.
+
 ## 📚 Course Notes
 
 Self-written beginner guides with tester, data analyst, and MLOps perspectives on every topic.
@@ -69,6 +90,7 @@ Self-written beginner guides with tester, data analyst, and MLOps perspectives o
 | `fastapi-traceability-matrix.md` *(updated)* | Traceability matrix mapping each FastAPI concept to its implementation and test status, for future reference |
 | `fastapi-rfc-vm-monitoring.md` *(updated)* | RFC design doc for starting/stopping a cloud VM and reading its stats via FastAPI, scoped against the Google Cloud Compute Engine API — design not yet implemented; includes a progress log of related real-deployment groundwork (PyCharm, `response_model`, GET/POST testing) |
 | `fastapi-response-patterns-notes.md` *(new)* | FastAPI response patterns: JSON responses with Pydantic models, `StreamingResponse`, `response_model` for hiding sensitive fields, request logging with middleware; how to test each in PyCharm and `/docs`; why `/docs` lists 422 even on success; time to first byte vs total time for streaming; functional, performance and data-analysis views |
+| `fastapi-dynaconf-config-notes.md` *(new)* | Dynaconf for production-ready FastAPI: files created by `dynaconf init`, `[development]` / `[production]` environments, secrets kept out of Git, `ENV_FOR_DYNACONF` and `DYNACONF_PORT` overrides, priority order, why a restart is needed, tester and MLOps views |
 | `sklearn-rfc-humanlearn-outliers.md` *(new)* | human-learn outlier detection resolved: `FunctionOutlierDetector` / `InteractiveOutlierDetector`, scikit-learn-style 1 / -1 API, drawing polygons on charts with custom group labels, the `threshold` parameter and missing-feature handling, plus a local-environment assignment using the penguin dataset |
 
 ## 🗂 Repo Structure
@@ -93,6 +115,7 @@ MLOps beginner friendly learning
 │   ├── fastapi-traceability-matrix.md         (updated)
 │   ├── fastapi-rfc-vm-monitoring.md           (updated)
 │   ├── fastapi-response-patterns-notes.md     (new)
+│   ├── fastapi-dynaconf-config-notes.md       (new)
 │   └── sklearn-rfc-humanlearn-outliers.md     (new)
 │
 ├── notebooks/
@@ -103,6 +126,10 @@ MLOps beginner friendly learning
 └── projects/
     ├── fastapi-response-patterns/
     │   └── main.py                            (new)
+    ├── fastapi-dynaconf-config/
+    │   ├── main.py                            (new)
+    │   ├── config.py                          (new)
+    │   └── settings.toml                      (new; .secrets.toml is NOT uploaded)
     └── (deployable project coming in Week 12)
 ```
 
