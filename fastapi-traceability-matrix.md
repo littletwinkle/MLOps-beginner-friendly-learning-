@@ -32,6 +32,12 @@ Maps each concept covered to its design intent, where it's implemented, and how 
 | R25 | Request logging via middleware | Log method, path, status and time taken for every call from one place | `@app.middleware("http")` `log_requests()` | Call each endpoint, check PyCharm terminal for one log line per call | Done |
 | R26 | Streaming timing | Understand what the middleware time means for a streaming endpoint | Middleware log for `GET /stream` | Log showed `200 in 1.54 ms` (time to first byte); total time is ~5 s because the middleware stops at response start | Done (time to first byte); total-time logging inside the generator suggested |
 | R27 | Reading `/docs` response codes | Tell possible responses apart from actual results | `/docs` **Responses** table vs **Server response** | Confirmed 422 listed on a successful call; real calls checked in the terminal log | Done (documented) |
+| R28 | Config files via Dynaconf | Keep settings and secrets out of the code | `dynaconf init -f toml` creates `config.py`, `settings.toml`, `.secrets.toml` in `projects/fastapi-dynaconf-config/` | Ran `dynaconf init`; confirmed `.secrets.toml` is listed in `.gitignore` | Done |
+| R29 | Environment-based settings | Run the same app in development and production with different values | `[development]` and `[production]` sections in `settings.toml`, `environments=True` in `config.py` | `GET /info`: DEVELOPMENT, debug true, port 8000; with `ENV_FOR_DYNACONF=production`: PRODUCTION, debug false, port 9000 | Done |
+| R30 | Runtime override | Change a value without editing files | `DYNACONF_PORT` environment variable | `DYNACONF_PORT=8500` → port 8500 in development; with production + `DYNACONF_PORT=9500` → port 9500 | Done |
+| R31 | Secrets separated from settings | Keep credentials out of normal config and out of GitHub | `.secrets.toml` with `api_key`; `GET /secret-check` returns only true/false | `/secret-check` → `{"secret_loaded": true}` in both environments; key never returned | Done |
+| R32 | Config read at startup | Understand when a config change takes effect | Dynaconf `settings` loaded when the server starts | Called an endpoint before the restart and saw old port; after restart saw the override | Done (documented) |
+| R33 | Server started from settings | Pass config values into uvicorn | `uvicorn.run("main:app", host=settings.HOST, port=settings.PORT, reload=settings.DEBUG)` | Terminal startup line shows the configured port | Done |
 
 ## Legend
 - **Done** — implemented and manually verified
@@ -45,3 +51,5 @@ Maps each concept covered to its design intent, where it's implemented, and how 
 - R18: VM start/stop monitoring is scoped but not started — needs Compute Engine API design (see RFC)
 - R26: total streaming time not yet logged; add a log line inside `live_data()` after the loop
 - Persistence is all in-memory (`logs`, `responses`, `logs_db`, event counter) — lost on restart; no database layer yet
+- R31: secrets are still in a local `.secrets.toml` file; production style (environment variables or a secret manager) not yet tried
+- R29/R30: no automated test for the environment switch yet; checked manually through `/info`
